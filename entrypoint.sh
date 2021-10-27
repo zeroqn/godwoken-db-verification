@@ -9,6 +9,7 @@ readonly CONFIG_TOML=$GODWOKEN_CWD/config.toml
 readonly SYNC=$GODWOKEN_CWD/sync
 # Do db block verification
 readonly VERIFY=$GODWOKEN_CWD/verify
+readonly OVERRIDDEN=$GODWOKEN_CWD/entrypoint.sh
 
 sync() {
     $GODWOKEN_BIN -c ${CONFIG_TOML}
@@ -35,7 +36,9 @@ verify_db() {
 echo "GODWOKEN_BIN: ${GODWOKEN_BIN}"
 echo "GODWOKEN_CWD: ${GODWOKEN_CWD}"
 
-if test -f "$SYNC"; then
+if test -f "$OVERRIDDEN"; then
+    ${OVERRIDDEN}
+elif test -f "$SYNC"; then
     sync
 elif test -f "$VERIFY"; then
     verify_db
