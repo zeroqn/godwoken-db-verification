@@ -13,7 +13,7 @@ readonly VERIFY=$GODWOKEN_CWD/verify
 readonly OVERRIDDEN=$GODWOKEN_CWD/entrypoint.sh
 
 sync() {
-    $GODWOKEN_BIN -c ${CONFIG_TOML} 2>${GODWOKEN_LOGS}/sync.log
+    $GODWOKEN_BIN run -c ${CONFIG_TOML} 2>${GODWOKEN_LOGS}/sync.log
 }
 
 verify_db() {
