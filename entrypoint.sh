@@ -4,6 +4,7 @@ set -u
 
 readonly GODWOKEN_BIN=${GODWOKEN_BIN:="/bin/godwoken"}
 readonly GODWOKEN_CWD=${GODWOKEN_CWD:="/opt/godwoken"}
+readonly GODWOKEN_LOGS=${GODWOKEN_CWD}/logs
 readonly CONFIG_TOML=$GODWOKEN_CWD/config.toml
 
 readonly SYNC=$GODWOKEN_CWD/sync
@@ -12,7 +13,7 @@ readonly VERIFY=$GODWOKEN_CWD/verify
 readonly OVERRIDDEN=$GODWOKEN_CWD/entrypoint.sh
 
 sync() {
-    $GODWOKEN_BIN -c ${CONFIG_TOML}
+    $GODWOKEN_BIN -c ${CONFIG_TOML} 2>${GODWOKEN_LOGS}/sync.log
 }
 
 verify_db() {
@@ -30,11 +31,14 @@ verify_db() {
 
     echo ${from_block}
     echo ${to_block}
-    $GODWOKEN_BIN verify-db-block -c ${CONFIG_TOML} ${from_block} ${to_block}
+    $GODWOKEN_BIN verify-db-block -c ${CONFIG_TOML} ${from_block} ${to_block} 2>${GODWOKEN_LOGS}/verify.log
 }
 
 echo "GODWOKEN_BIN: ${GODWOKEN_BIN}"
 echo "GODWOKEN_CWD: ${GODWOKEN_CWD}"
+echo "GODWOKEN_LOGS: ${GODWOKEN_LOGS}"
+
+mkdir -p ${GODWOKEN_LOGS}
 
 if test -f "$OVERRIDDEN"; then
     ${OVERRIDDEN}
