@@ -17,7 +17,7 @@ sync() {
 }
 
 verify_db() {
-    local verify_blocks=($(cat verify | tr ',' "\n"))
+    local verify_blocks=($(cat ${VERIFY} | tr ',' "\n"))
     local from_block=""
     local to_block=""
 
@@ -29,9 +29,10 @@ verify_db() {
         to_block="-t ${verify_blocks[1]}"
     fi
 
-    echo ${from_block}
-    echo ${to_block}
-    $GODWOKEN_BIN verify-db-block -c ${CONFIG_TOML} ${from_block} ${to_block} 2>${GODWOKEN_LOGS}/verify.log
+    echo ${from_block} > ${GODWOKEN_LOGS}/verify.log
+    echo ${to_block} >> ${GODWOKEN_LOGS}/verify.log
+
+    $GODWOKEN_BIN verify-db-block -c ${CONFIG_TOML} ${from_block} ${to_block} 2>>${GODWOKEN_LOGS}/verify.log
 }
 
 echo "GODWOKEN_BIN: ${GODWOKEN_BIN}"
