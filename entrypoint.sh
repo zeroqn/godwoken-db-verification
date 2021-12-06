@@ -9,30 +9,30 @@ readonly CONFIG_TOML=$GODWOKEN_CWD/config.toml
 
 readonly SYNC=$GODWOKEN_CWD/sync
 # Do db block verification
-readonly VERIFY=$GODWOKEN_CWD/verify
+readonly REPLAY=$GODWOKEN_CWD/replay
 readonly OVERRIDDEN=$GODWOKEN_CWD/entrypoint.sh
 
 sync() {
     $GODWOKEN_BIN run -c ${CONFIG_TOML} 2>${GODWOKEN_LOGS}/sync.log
 }
 
-verify_db() {
-    local verify_blocks=($(cat ${VERIFY} | tr ',' "\n"))
+replay_block() {
+    local replay_blocks=($(cat ${REPLAY} | tr ',' "\n"))
     local from_block=""
     local to_block=""
 
-    if [[ -v "verify_blocks[0]" ]] ; then
-        from_block="-f ${verify_blocks[0]}"
+    if [[ -v "replay_blocks[0]" ]] ; then
+        from_block="-b ${replay_blocks[0]}"
     fi
 
-    if [[ -v "verify_blocks[1]" ]] ; then
-        to_block="-t ${verify_blocks[1]}"
+    if [[ -v "replay_blocks[1]" ]] ; then
+        to_block="-t ${replay_blocks[1]}"
     fi
 
-    echo ${from_block} > ${GODWOKEN_LOGS}/verify.log
-    echo ${to_block} >> ${GODWOKEN_LOGS}/verify.log
+    echo ${from_block} > ${GODWOKEN_LOGS}/replay.log
+    echo ${to_block} >> ${GODWOKEN_LOGS}/replay.log
 
-    $GODWOKEN_BIN verify-db-block -c ${CONFIG_TOML} ${from_block} ${to_block} 2>>${GODWOKEN_LOGS}/verify.log
+    $GODWOKEN_BIN replay-block -c ${CONFIG_TOML} ${from_block} 2>>${GODWOKEN_LOGS}/replay.log
 }
 
 echo "GODWOKEN_BIN: ${GODWOKEN_BIN}"
@@ -45,6 +45,6 @@ if test -f "$OVERRIDDEN"; then
     ${OVERRIDDEN}
 elif test -f "$SYNC"; then
     sync
-elif test -f "$VERIFY"; then
-    verify_db
+elif test -f "$REPLAY"; then
+    replay_block
 fi
